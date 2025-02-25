@@ -11,6 +11,7 @@ public class EnemyRadarVisualization : MonoBehaviour
     [SerializeField] private float Lenght = 1f;
     Dictionary<GameObject,GameObject> currentobjects;
     Rigidbody2D rb;
+    
     void OnEnemyDestroyed(GameObject enemy)
     {
         if (currentobjects[enemy] != null){

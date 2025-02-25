@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.Timeline.Actions;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -16,6 +12,7 @@ public class Player_Shooting_Handler : MonoBehaviour
     CorePlayerInput inputActions;
     bool _shooting = false;
     float _CoolDown;
+    
     void OnButtonPress(InputAction.CallbackContext callbackContext)
     {
         _shooting = callbackContext.ReadValueAsButton();

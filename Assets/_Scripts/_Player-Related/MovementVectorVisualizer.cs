@@ -8,6 +8,7 @@ public class MovementVectorVisualizer : MonoBehaviour
     [SerializeField] private float Width = .5f;
     Rigidbody2D rb;
     GameObject currentvisualization;
+    
     void Start()
     {
         currentvisualization = Instantiate(visualizationobj,transform.position,quaternion.identity);
