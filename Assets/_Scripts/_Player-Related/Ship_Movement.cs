@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,6 +8,7 @@ public class Ship_Movement : MonoBehaviour
     [SerializeField] private float ForwardThrustMultiplier = 2;
     [SerializeField] private float SpeedMultiplyer = 2;
     [SerializeField] private float TurnSpeed = 2;
+    PlayerHealthHandler _hp;
     Camera _camera;
     Mouse mouse;
     Rigidbody2D rb;
@@ -17,10 +19,11 @@ public class Ship_Movement : MonoBehaviour
     }
     void TurnTowardsMouse()
     {
-        Vector3 difference = _camera.ScreenToWorldPoint(mouse.position.ReadValue()) - transform.position;
-        difference.z = transform.position.z;
+        Vector3 difference = (Vector3)mouse.position.ReadValue()-_camera.WorldToScreenPoint(transform.position);
+        difference.z = 0;
         float TargetRotationZ = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg; // removed 90 from targetrotation as its fixed angle needed to face mouse
-        transform.rotation = Quaternion.Lerp(transform.rotation,Quaternion.Euler(0,0,TargetRotationZ-90),Time.deltaTime*TurnSpeed);
+        Quaternion target = Quaternion.AngleAxis(TargetRotationZ,transform.forward) * Quaternion.Euler(new Vector3(0,0,-90));
+        transform.rotation = Quaternion.Lerp(transform.rotation,target,Time.deltaTime*TurnSpeed);
     }
     void MoveStep()
     {
@@ -32,9 +35,8 @@ public class Ship_Movement : MonoBehaviour
     {
         mouse = Mouse.current;
         _camera = Camera.main;
-        if (!gameObject.TryGetComponent<Rigidbody2D>(out rb)){
-            Debug.LogError("No RigidBody2d found!");
-        }
+        if (!gameObject.TryGetComponent<Rigidbody2D>(out rb))Debug.LogError("No RigidBody2d found!");
+        if (!gameObject.TryGetComponent<PlayerHealthHandler>(out _hp)) Debug.LogError("No play health module found.");
         inputActions = new();
         inputActions.PrimaryGameControl.Movement.performed += OnMovementKeysPressed;
         inputActions.PrimaryGameControl.Movement.canceled += OnMovementKeysPressed;
@@ -42,8 +44,10 @@ public class Ship_Movement : MonoBehaviour
     }
     void Update()
     {
-        TurnTowardsMouse();
-        MoveStep();
+        if (_hp.Health > 0){
+            TurnTowardsMouse();
+            MoveStep();
+        }
     }
     void OnDestroy()
     {

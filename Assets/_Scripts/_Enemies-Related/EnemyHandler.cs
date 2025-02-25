@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
+[RequireComponent(typeof(EnemyHealth)),RequireComponent(typeof(Rigidbody2D))]
 public class EnemyHandler : MonoBehaviour
 {
     [Header("Speed settings")]
@@ -9,14 +11,17 @@ public class EnemyHandler : MonoBehaviour
     [SerializeField] private float ForwardThrustMultiplier = 2;
     [SerializeField] private float SpeedMultiplyer = 2;
     [SerializeField] private float TurnSpeed = 2;
-    [Header("AI settings")]
-   /* [SerializeField] private float MinTurnToMoveForward = 0.25f;
-    [SerializeField] private float SideMovementTreeshold = 0.1f;*/
+    [Header("AI damage settings")]
     [SerializeField] private int DamageOnTouch = -1;
     [SerializeField] private float DamageCooldown = -1;
+    [SerializeField] private GameObject projectile;
+    [SerializeField] private float ProjectileCoolDown = 4;
+    [SerializeField] private int ProjectileDamage = 1;
+    EnemyHealth health;
     Rigidbody2D rb;
     Transform target;
     bool CanDamage = true;
+    bool CanShoot = true;
     Vector2 movementvector()
     {
         Vector2 result = Vector2.zero;
@@ -27,7 +32,7 @@ public class EnemyHandler : MonoBehaviour
         }
         return result;
     }
-     void TurnTowardsMouse()
+    void TurnTowardsMouse()
     {
         Vector3 difference = target.position - transform.position; 
         difference.z = transform.position.z;
@@ -41,6 +46,18 @@ public class EnemyHandler : MonoBehaviour
         Vector2 newforce = transform.up * force.y * GlobalSpeed  * BackForthaddition + transform.right * force.x * SpeedMultiplyer * GlobalSpeed;
         rb.AddForce(newforce * Time.deltaTime);
     }
+    IEnumerator Shoot()
+    {
+        CanShoot = false;
+        GameObject bullet = Instantiate(projectile,transform.position+transform.up,transform.rotation);
+        if (bullet.TryGetComponent<ProjectileHandler>(out ProjectileHandler projectileHandler))
+        {
+            projectileHandler.Damage = ProjectileDamage;
+            projectileHandler.IgnoreMask = gameObject.layer;
+        }
+        yield return new WaitForSeconds(ProjectileCoolDown);
+        CanShoot = true;
+    }
     IEnumerator Damage(PlayerHealthHandler component){
         CanDamage = false;
         component.Health -= DamageOnTouch;
@@ -53,22 +70,28 @@ public class EnemyHandler : MonoBehaviour
     }
     void Start()
     {
+        health = GetComponent<EnemyHealth>();
         if (!gameObject.TryGetComponent<Rigidbody2D>(out rb))
         {
             Debug.LogError("No RigidBody2d found!");
         }
+        if (projectile == null || ProjectileCoolDown <= 0) CanShoot = false;
+        else CanShoot = true;
     }
     void Update()
     {
-        if (target != null)
+        if (target != null && health.Health > 0)
         {
             TurnTowardsMouse();
             MoveStep();
+            if (CanShoot) StartCoroutine(Shoot());
+        } else if (health.Health <= 0){
+            target = null;
         }
     }
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.TryGetComponent<PlayerHealthHandler>(out PlayerHealthHandler component))
+        if (collision.gameObject.TryGetComponent<PlayerHealthHandler>(out PlayerHealthHandler component) && health.Health > 0)
         {
             if (CanDamage && DamageOnTouch != -1)
             {
@@ -78,7 +101,7 @@ public class EnemyHandler : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.TryGetComponent<PlayerHealthHandler>(out PlayerHealthHandler component))
+        if (collision.gameObject.TryGetComponent<PlayerHealthHandler>(out PlayerHealthHandler component) && health.Health > 0)
         {
             target = collision.transform;
         }
