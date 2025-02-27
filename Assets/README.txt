@@ -2,6 +2,13 @@ My first package includes:
 player and enemy spaceship system,
 with shooting, death, and asteroids!
 
+** THE PACKAGE USES NEW INPUT SYSTEM, TO ACTIVATE IT FOLLOW THE FOLLOWING: **
+Get into window->package manager, then find Input System and install it into your project.
+After that, you have to activate it in Edit -> Project Settings -> Player ->
+Other Settings -> Active Input Handler to New Input System.
+
+To make camera in DEMOSCENE to work, you will have to install Cinemachine in package manager.
+
 now, howtos:
 HOWTO CREATE ENEMIES:
 To create new enemies, you HAVE TO attach both EnemyHandler, and Enemy Health scripts to it,
