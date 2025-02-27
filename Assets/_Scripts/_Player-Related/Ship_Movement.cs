@@ -8,6 +8,7 @@ public class Ship_Movement : MonoBehaviour
     [SerializeField] private float ForwardThrustMultiplier = 2;
     [SerializeField] private float SpeedMultiplyer = 2;
     [SerializeField] private float TurnSpeed = 2;
+    [SerializeField] private float SpeedLimit = 20;
     PlayerHealthHandler _hp;
     Camera _camera;
     Mouse mouse;
@@ -29,7 +30,8 @@ public class Ship_Movement : MonoBehaviour
     {
         float BackForthaddition = movementvector.y > 0 ? SpeedMultiplyer * ForwardThrustMultiplier : SpeedMultiplyer;
         Vector2 newforce = transform.up * movementvector.y * GlobalSpeed  * BackForthaddition + transform.right * movementvector.x * SpeedMultiplyer * GlobalSpeed;
-        rb.AddForce(newforce * Time.deltaTime);
+        newforce = Vector2.ClampMagnitude(newforce*Time.deltaTime+rb.velocity,SpeedLimit);
+        rb.velocity = newforce;
     }
     void Start()
     {

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5939176981160522586}
   m_Layer: 3
   m_Name: PlayerShootPosition
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9760,7 +9760,7 @@ GameObject:
   - component: {fileID: 1402689459007493246}
   m_Layer: 3
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9871,10 +9871,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d705bc07b3bc784fae5691892260ae1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalSpeed: 10
-  ForwardThrustMultiplier: 1.5
-  SpeedMultiplyer: 4
+  GlobalSpeed: 1
+  ForwardThrustMultiplier: 2
+  SpeedMultiplyer: 1
   TurnSpeed: 2
+  SpeedLimit: 8
 --- !u!114 &1822721989321657820
 MonoBehaviour:
   m_ObjectHideFlags: 0

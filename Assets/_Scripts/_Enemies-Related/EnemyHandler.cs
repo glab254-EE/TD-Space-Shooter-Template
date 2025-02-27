@@ -53,7 +53,7 @@ public class EnemyHandler : MonoBehaviour
         if (bullet.TryGetComponent<ProjectileHandler>(out ProjectileHandler projectileHandler))
         {
             projectileHandler.Damage = ProjectileDamage;
-            projectileHandler.IgnoreMask = gameObject.layer;
+            projectileHandler.IgnoreTag = gameObject.tag;
         }
         yield return new WaitForSeconds(ProjectileCoolDown);
         CanShoot = true;
@@ -101,14 +101,14 @@ public class EnemyHandler : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.TryGetComponent<PlayerHealthHandler>(out PlayerHealthHandler component) && health.Health > 0)
+        if (collision.gameObject.TryGetComponent<PlayerHealthHandler>(out _) && health.Health > 0)
         {
             target = collision.transform;
         }
     }
     void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.TryGetComponent<PlayerHealthHandler>(out PlayerHealthHandler component))
+        if (collision.gameObject.TryGetComponent<PlayerHealthHandler>(out PlayerHealthHandler _))
         {
             if (target != null){
                 target = null;

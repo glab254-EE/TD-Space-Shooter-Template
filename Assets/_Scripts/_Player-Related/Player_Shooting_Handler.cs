@@ -16,7 +16,9 @@ public class Player_Shooting_Handler : MonoBehaviour
     void OnButtonPress(InputAction.CallbackContext callbackContext)
     {
         _shooting = callbackContext.ReadValueAsButton();
+        if (_CoolDown > 0 ){
         _CoolDown = 60/Firerate;
+        }
     }
     void Fire(){
         if (ShootSFX != null && sfxsource != null){
@@ -27,13 +29,12 @@ public class Player_Shooting_Handler : MonoBehaviour
         if (_bullet.TryGetComponent<ProjectileHandler>(out ProjectileHandler projectileHandler))
         {
             projectileHandler.Damage = Damage;
-            projectileHandler.IgnoreMask = gameObject.layer;
-            projectileHandler.IgnoreMask = 3;
+            projectileHandler.IgnoreTag = gameObject.tag;
         }
     }
     void Start()
     {
-        _CoolDown = 60/Firerate;
+        _CoolDown = 0;
         inputActions = new();
         inputActions.PrimaryGameControl.Fire.performed += OnButtonPress;
         inputActions.PrimaryGameControl.Fire.canceled  += OnButtonPress;

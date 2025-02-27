@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class ProjectileHandler : MonoBehaviour
 {
     [SerializeField] internal int Damage;
-    [SerializeField] internal LayerMask IgnoreMask;
+    [SerializeField] internal string IgnoreTag;
     [SerializeField] private float Speed;
     [SerializeField] private float HomingSpeed;
     [SerializeField] private float SpeedDecay;
@@ -42,7 +42,7 @@ public class ProjectileHandler : MonoBehaviour
     }
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.layer != IgnoreMask && !touched){
+        if (collision.gameObject.CompareTag(IgnoreTag) == false && !touched){
             touched = true;
             rb.velocity = Vector3.zero;
             if (collision.gameObject.TryGetComponent<PlayerHealthHandler>(out PlayerHealthHandler component))
@@ -62,7 +62,7 @@ public class ProjectileHandler : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (HomingSpeed > 0 && (collision.gameObject.TryGetComponent<EnemyHandler>(out _) || collision.gameObject.TryGetComponent<PlayerHealthHandler>(out _)) && collision.gameObject.layer != IgnoreMask){
+        if (HomingSpeed > 0 && (collision.gameObject.TryGetComponent<EnemyHandler>(out _) || collision.gameObject.TryGetComponent<PlayerHealthHandler>(out _)) && collision.gameObject.CompareTag(IgnoreTag) == false){
             target = collision.transform;
         } 
     }
